@@ -5,24 +5,21 @@ import jdk.jfr.Event;
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
+import java.awt.event.*;
 
-public class LoginPage  extends JFrame  {
+public class LoginPage  extends JFrame implements PageStructure  {
     Container container = getContentPane();
     String userName1, userName;
     String password;
     Operations operations = new Operations();
-    private Border lightGray;
+    Border lightGray;
     private Color color;
 
     private JLabel textWelcome;
     private JLabel usernameLabel = new JLabel("Username");
     private JLabel passwordLabel = new JLabel("Password");
-    private JTextField usernameField = new JTextField();
-    private JPasswordField passwordField = new JPasswordField();
+    private JTextField usernameField = new JTextField("Username");
+    private JPasswordField passwordField = new JPasswordField("password");
     private FlowLayout layout;
     //private JComboBox comboBox;
     private JLabel myWelcomeTex = new JLabel("Welcome to Palmer Group Portal");
@@ -32,7 +29,7 @@ public class LoginPage  extends JFrame  {
     private JLabel showPassword = new JLabel("Show password");
 
 
-    LoginPage () {
+    LoginPage ()  {
         super("Payroll Portal");
         setLayoutMan();
         setMyLayout();
@@ -41,12 +38,54 @@ public class LoginPage  extends JFrame  {
         theHandler handler = new theHandler();
         usernameField.addActionListener(handler);
         passwordField.addActionListener(handler);
+        passwordField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if(passwordField.getText().trim().toLowerCase().equals("password")) {
+                    passwordField.setText("");
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (passwordField.getText().trim().toLowerCase().equals("password") || passwordField.getText().trim().toLowerCase().equals("")){
+                    passwordField.setText("password");
+                }
+            }
+        });
+        usernameField.addFocusListener(new FocusListener(){
+
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (usernameField.getText().trim().toLowerCase().equals("username")){
+                    usernameField.setText("");
+                    usernameField.setBackground(Color.WHITE);
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (usernameField.getText().trim().toLowerCase().equals("username") || usernameField.getText().trim().toLowerCase().equals("")){
+                    usernameField.setText("Username");
+                    usernameField.setBackground(new Color(235, 235, 235));
+                    usernameField.setForeground(Color.black);
+                }
+            }
+        });
         checkButton.addActionListener(handler);
+        DataBase data = new DataBase();
+        data.getDataConnection();
+
 
     }
+
+
+
     public void setLayoutMan (){
         container.setLayout(null);
     }
+
+    @Override
     public void setMyLayout () {
         //myWelcomeTex.setBounds(300, 5, 100, 20);
         lightGray = BorderFactory.createLineBorder(Color.LIGHT_GRAY, 3, true);
@@ -111,9 +150,10 @@ public class LoginPage  extends JFrame  {
 
             }
 
-
+            //This method checks if the user selects show password and then perform actions based on selection
                 if(checkButton.isSelected()){
-                    passwordField.setEchoChar((char)0);
+                        passwordField.setEchoChar((char) 0);
+
                 } else
                 {
                     passwordField.setEchoChar('\u26AB');
