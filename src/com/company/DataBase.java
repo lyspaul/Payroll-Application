@@ -4,13 +4,16 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 
 //This class handles the database
-public class DataBase {
+public class DataBase  {
+    public static void main(String[] args) {
+        getConnection();
+    }
     public static Connection getConnection() {
         try {
             String username = "root";
             String password = "Branham11";
             String driver = "com.mysql.cj.jdbc.Driver";
-            String url = "jdbc:mysql://localhost:3306/eaglesgroup.db";
+            String url = "jdbc:mysql://localhost:3306/eaglesgroup";
             Connection conn = DriverManager.getConnection(url, username, password);
             return conn;
         } catch (Exception e) {

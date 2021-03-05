@@ -19,48 +19,33 @@ public class CreateAccount extends States  implements PageStructure  { //Beginni
     final private JPanel panel2 = new JPanel();
     final private JFrame frame = new JFrame("Register account");
     private JPanel container = new JPanel();
-    private String employeeID;
-    private JTextField employeeIDField = new FocusListenerHandler("Employee Number");
-    private String firstName;
-    private JTextField firstNameField = new FocusListenerHandler("First name");
-    private String lastName;
-    private JTextField lastNameField = new FocusListenerHandler("Last name");
-    private String month;
-    private String day;
-    private String year;
-    private String username;
-    private JTextField usernameField = new FocusListenerHandler("Username");
-    private String password;
-    private JPasswordField passwordField = new JPasswordField("Password");
-    private JPasswordField confirmPasswordField = new JPasswordField("Password");
-    private String emailAddress;
-    private String confirmPassword;
-    private JTextField emailAddressField = new FocusListenerHandler("Email Address");
-    private String address;
-    private JTextField addressField = new FocusListenerHandler("Address");
-    private String city;
+    final private JTextField employeeIDField = new FocusListenerHandler("Employee Number");
+    final private JTextField firstNameField = new FocusListenerHandler("First name");
+    final private JTextField lastNameField = new FocusListenerHandler("Last name");
+    final private JTextField usernameField = new FocusListenerHandler("Username");
+    final private JPasswordField passwordField = new JPasswordField("Password");
+    final private JPasswordField confirmPasswordField = new JPasswordField("Password");
+    final private JTextField emailAddressField = new FocusListenerHandler("Email Address");
+    final private JTextField addressField = new FocusListenerHandler("Address");
     final private JTextField cityField = new FocusListenerHandler("City");
-    private String zipcode;
-    private JTextField zipcodeField = new FocusListenerHandler("Zip code");
-    //private JTextField phoneNumberField1 = new FocusListenerHandler("Phone number");
-    private String phoneNumber;
-    private JLabel createAccountLabel = new JLabel("CREATE AN ACCOUNT");
-    private JComboBox stateList = new  JComboBox(getStatesList());
-    private Font font = new Font("Arial", Font.BOLD, 20);
+    final private JTextField zipcodeField = new FocusListenerHandler("Zip code");
+    final private JLabel createAccountLabel = new JLabel("CREATE AN ACCOUNT");
+    final private JComboBox stateList = new  JComboBox(getStatesList());
+    final private Font font = new Font("Arial", Font.BOLD, 20);
     private String state;
-    private JLabel backgroundImage;
-    private ImageIcon wallPaper = new ImageIcon("wallpaper.jpg");
-    private JLabel jFrameBackgroundLabel;
+    final private JLabel backgroundImage;
+    final private ImageIcon wallPaper = new ImageIcon("wallpaper.jpg");
+    final private JLabel jFrameBackgroundLabel;
     private BufferedImage image = null;
-    private JLabel test;
+    final private JLabel test;
     private BufferedImage logo = null;
-    private JLabel companyLogoLabel;
-    private JLabel test2;
-    private JButton createAccountButton = new JButton("CREATE ACCOUNT");
-    private MaskFormatter formatter = new MaskFormatter("(###) ###-####");
-    //private MaskFormatter secondFormatter = new MaskFormatter("#####-####");
+    final private JLabel companyLogoLabel;
+    final private JLabel test2;
+    final private JButton createAccountButton = new JButton("CREATE ACCOUNT");
+    final private MaskFormatter formatter = new MaskFormatter("(###) ###-####");
     private JFormattedTextField phoneNumberField1 = new JFormattedTextField(formatter);
-    private ArrayList<Boolean> isCreateButtonValid = new ArrayList<Boolean>();
+    final private ArrayList<Boolean> isCreateButtonValid = new ArrayList<Boolean>();
+    final private ErrorMessage error = new ErrorMessage();
 
     public CreateAccount() throws ParseException { //Beginning of Constructor
 
@@ -82,9 +67,9 @@ public class CreateAccount extends States  implements PageStructure  { //Beginni
             e.printStackTrace();
         }
         Image dimensionImage = image.getScaledInstance(jFrameBackgroundLabel.getWidth(),
-                jFrameBackgroundLabel.getHeight(), Image.SCALE_SMOOTH);
+                jFrameBackgroundLabel.getHeight(), Image.SCALE_SMOOTH); //Adjust the image size to the JLabel' size
         ImageIcon jFrameBackgroundImg = new ImageIcon(dimensionImage);
-        test = new JLabel("", jFrameBackgroundImg, JLabel.LEFT);;
+        test = new JLabel("", jFrameBackgroundImg, JLabel.LEFT);
         test.setBounds(0, 0,485, 535);
         test.setBorder(lightGray);
 
@@ -168,7 +153,7 @@ public class CreateAccount extends States  implements PageStructure  { //Beginni
                     phoneNumberField1.setText("");
 
                 }
-               System.out.println("HAHAAH");
+//               System.out.println("HAHAAH");
            }
 
            @Override
@@ -257,72 +242,104 @@ public class CreateAccount extends States  implements PageStructure  { //Beginni
 
         } //End of allContainer() method
 
+    //*** Method to store all the client info ***
+
+        private void storeValues(){
+            try {
+            StoreData data = new StoreData(firstNameField.getText(), lastNameField.getText(), emailAddressField.getText(),
+                    employeeIDField.getText(), usernameField.getText(), passwordField.getPassword().toString(),
+                    addressField.getText(), cityField.getText(), state, zipcodeField.getText(), phoneNumberField1.getText());
+            data.storeDataMySQL();
+                System.out.println("value stored");
+        } catch (Exception e){
+                e.printStackTrace();
+            }
+    }
+
+
     class CreateButtonHandler implements ActionListener { //Create Button Action Listener
 
     @Override
     public void actionPerformed(ActionEvent event) {
-        if (firstNameField.getText().isEmpty()) {
-            System.out.println("First name is empty");
-            isCreateButtonValid.add(false);
-        }
 
-
-            Name name = new Name(firstNameField.getText());
-            if(name.checkName() == true) {
-                System.out.println("Valid name");
-                isCreateButtonValid.add(true);
-            } else {
-                System.out.println("Please enter a valid name");
+        try {
+            Name name = new Name(firstNameField.getText(), lastNameField.getText());
+            if(name.CheckFirstName() == false) {
+                error.setMessage("Please enter a valid first name");
                 isCreateButtonValid.add(false);
+            } else if (name.CheckFirstName() == true){
+                isCreateButtonValid.add(true);
+            }
+            if (name.CheckLastName() == false){
+                error.setMessage("Please enter a valid last name");
+            } else if (name.CheckLastName() == true){
+                isCreateButtonValid.add(true);
             }
 
-
-        if (lastNameField.getText().isEmpty()) {
-            System.out.println("Last name is empty");
-            isCreateButtonValid.add(false);
+        } catch (Exception e){
+            //error.setMessage("Please enter first name");
+            //isCreateButtonValid.add(false);
         }
 
-            Name name2 = new Name(lastNameField.getText());
-            if(name2.checkName() == true) {
-                System.out.println("Valid name");
-                isCreateButtonValid.add(true);
-            } else {
-                System.out.println("Please enter a valid name");
-                isCreateButtonValid.add(false);
-            }
+//        if (lastNameField.getText().isEmpty()) {
+//            System.out.println("Last name is empty");
+//            isCreateButtonValid.add(false);
+//        }
 
-        if (emailAddressField.getText().isEmpty()) {
-            System.out.println("Email address is empty");
-            isCreateButtonValid.add(false);
-        }
+
+
+    try {
         Email email = new Email(emailAddressField.getText());
-
-            if(email.checkEmail() == true) {
-                System.out.println("Valid email");
-                isCreateButtonValid.add(true);
-            } else {
-                System.out.println("Please enter a valid email");
-                isCreateButtonValid.add(false);
-            }
-
-        if (employeeIDField.getText().isEmpty()) {
-            System.out.println("Employee ID is empty");
+        //email.checkEmail();
+        if(email.checkEmail() == false) {
+            error.setMessage("Please enter a valid email address");
             isCreateButtonValid.add(false);
+            System.out.println("INValid email");
+        } else {
+            isCreateButtonValid.add(true);
         }
+    } catch (Exception e){
+
+    }
+    try{
+        EmployeeID employeeID = new EmployeeID(employeeIDField.getText());
+        if(employeeID.checkValidation() == false){
+            error.setMessage("Non valid Employee ID");
+            isCreateButtonValid.add(false);
+        } else
+            isCreateButtonValid.add(true);
+    }
+    catch(Exception e) {
+
+    }
+    try{
+        Username username = new Username(usernameField.getText());
+        if(username.checkValidation() == false){
+            error.setMessage("Invalid username");
+        } else
+            username.checkValidation();
+    }
+    catch (Exception e){
+
+    }
+    try {
         if (usernameField.getText().isEmpty()) {
-            System.out.println("Username is empty");
+//            System.out.println("Username is empty");
             isCreateButtonValid.add(false);
         }
         if (passwordField.getText().isEmpty()) {
-            System.out.println("Password is empty");
+//            System.out.println("Password is empty");
             isCreateButtonValid.add(false);
         }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
         if (confirmPasswordField.getText().isEmpty()) {
-            System.out.println("Please Enter a Password");
+//            System.out.println("Please Enter a Password");
             isCreateButtonValid.add(false);
         }
         if (addressField.getText().isEmpty()) {
-            System.out.println("Please Enter an address");
+//            System.out.println("Please Enter an address");
             isCreateButtonValid.add(false);
         }
         if (cityField.getText().isEmpty()) {
@@ -330,41 +347,58 @@ public class CreateAccount extends States  implements PageStructure  { //Beginni
             isCreateButtonValid.add(false);
         }
         if (zipcodeField.getText().isEmpty()) {
-            System.out.println("Please Enter a zipcode");
+//            System.out.println("Please Enter a zipcode");
             isCreateButtonValid.add(false);
         }
 
             ZipCode zipCode = new ZipCode(zipcodeField.getText());
             if(zipCode.checkZipcode() == false) {
-                System.out.println("Please Enter a valid zipcode");
+//                System.out.println("Please Enter a valid zipcode");
                 isCreateButtonValid.add(false);
             }
-
+        try {
             if (state.trim().toLowerCase().equals("state")) {
-                System.out.println("Please enter a state");
+                error.setMessage("PLease enter state");
+                error.getMessage();
+                //System.out.println();
                 isCreateButtonValid.add(false);
             }
+        } catch (Exception e){
+            System.out.println("Error");
+        }
+//            try {
+//                if (state.equals(null)) {
+//                    System.out.println("Please enter a state empty");
+//                    isCreateButtonValid.add(false);
+//                }
+//            } catch (Exception e) {
+//                System.out.println("Yes");
+//            }
 
         PhoneNumber phoneNumber = new PhoneNumber(phoneNumberField1.getText());
         if (phoneNumberField1.getText().isEmpty()) {
-            System.out.println("Phone number is empty");
+//            System.out.println("Phone number is empty");
             isCreateButtonValid.add(false);
         }
+
 
         //checks if all conditions are met to create an account
         if (isCreateButtonValid.contains(false)) {
             for(int i=0; i<isCreateButtonValid.size(); i++){
 
-                System.out.println("FALSE VALUE of  " + i + " is " + isCreateButtonValid.get(i));
-                isCreateButtonValid.clear();
+                //System.out.println("FALSE VALUE of  " + i + " is " + isCreateButtonValid.get(i));
+                //isCreateButtonValid.clear();
             }
-            System.out.println("MY SIZEEEEE + " + isCreateButtonValid.size());
-            System.out.println("SORRY CANNOT PERFORM CREATE ACCOUNT");
+//
+//            System.out.println("SORRY CANNOT PERFORM CREATE ACCOUNT");
+            error.getMessage();
+            error.clearStack();
 
 
         } else
         {
             JOptionPane.showMessageDialog(null, "SUCCESSFUL CREATE ACCOUNT");
+            storeValues();
         }
 
 
@@ -372,6 +406,9 @@ public class CreateAccount extends States  implements PageStructure  { //Beginni
 //            System.out.println("Valid");
     }
 }
+
+
+
     class FocusListenerHandler extends JTextField implements FocusListener {
     private String hint;
     private boolean showingHint;
@@ -385,7 +422,7 @@ public class CreateAccount extends States  implements PageStructure  { //Beginni
             if(this.getText().isEmpty()){
                 super.setText(hint);
                 showingHint = true;
-                System.out.println("focus lost");
+//                System.out.println("focus lost");
             }
         }
 
@@ -393,7 +430,7 @@ public class CreateAccount extends States  implements PageStructure  { //Beginni
         if(this.getText().isEmpty()){
             super.setText("");
             showingHint = false;
-            System.out.println("focus gained");
+//            System.out.println("focus gained");
         }
     }
 

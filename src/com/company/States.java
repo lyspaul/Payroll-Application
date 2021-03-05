@@ -6,12 +6,14 @@ import java.awt.List;
 
 //This class handles the list of states so we can use it in the "JComboBox stateList" from CreateAccount Class
 public class States {
-    private ArrayList <String> statesList = new ArrayList<>();
+    private ArrayList <String> statesList;
 
     public States() {
+        statesList = new ArrayList<>();
         stateGet();
+
     }
-    private ArrayList<String> stateGet(){
+    private ArrayList<String> stateGet() {
         statesList.add("State");
         statesList.add("Alabama");
         statesList.add("Alaska");
